@@ -1,0 +1,52 @@
+* {
+  margin: 0;
+  padding: 0;
+}
+
+html {
+  background-color: black;
+}
+
+div.pong-table {
+  position: relative;
+  border: 4px dashed white;
+  width: 80vw;
+  height: 80vh;
+  margin: 10px;
+  border-radius: 20px;
+}
+
+div.pong-table > div.center-line {
+  position: absolute;
+  width: 4px;
+  height: 100%;
+  background-color: white;
+  left: 50%;
+  transform: translateX(-50%);
+}
+
+div.paddle {
+  position: absolute;
+  width: 4px;
+  height: 60px;
+  background-color: white;
+  top: calc(50% - 60px);
+}
+
+div.left-paddle {
+  left: 10px;
+}
+
+div.right-paddle {
+  right: 10px;
+}
+
+div.ball {
+  position: absolute;
+  width: 20px;
+  height: 20px;
+  background-color: white;
+  border-radius: 50%;
+  left: calc(50% - 10px);
+  top: calc(50% - 10px);
+}
