@@ -126,7 +126,12 @@ function createBall() {
  * moveBall: Move the ball
  */
 function moveBall() {
-  ball = document.querySelector(".ball");
+  const ball = document.querySelector(".ball");
+  const leftPaddle = document.querySelector(".left-paddle");
+  const rightPaddle = document.querySelector(".right-paddle");
+
+  const leftPaddleRect = leftPaddle.getBoundingClientRect();
+  const rightPaddleRect = rightPaddle.getBoundingClientRect();
 
   const currentTop = ball.offsetTop;
   const currentLeft = ball.offsetLeft;
@@ -138,6 +143,24 @@ function moveBall() {
   // ball touches top or bottom walls
   if (newTop <= 0 || newTop + ball.clientHeight >= pongTable.clientHeight) {
     ball.velocity.y *= -1;
+  }
+
+  // ball touches left paddle
+  if (
+    newLeft <= leftPaddleRect.right &&
+    newTop + ball.clientHeight >= leftPaddleRect.top &&
+    newTop <= leftPaddleRect.bottom
+  ) {
+    ball.velocity.x *= -1;
+  }
+
+  // ball touches right paddle
+  if (
+    newLeft + ball.clientWidth >= rightPaddleRect.left &&
+    newTop + ball.clientHeight >= rightPaddleRect.top &&
+    newTop <= rightPaddleRect.bottom
+  ) {
+    ball.velocity.x *= -1;
   }
 
   // ball touches left or right walls
