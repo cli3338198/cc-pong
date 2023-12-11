@@ -14,6 +14,10 @@ div.pong-table {
   height: 80vh;
   margin: 10px;
   border-radius: 20px;
+  /* for scores */
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
 }
 
 div.pong-table > div.center-line {
@@ -50,4 +54,11 @@ div.ball {
   border-radius: 50%;
   left: calc(50% - 10px);
   top: calc(50% - 10px);
+}
+
+div.score {
+  color: white;
+  margin: auto;
+  font-size: x-large;
+  font-family: Arial, Helvetica, sans-serif;
 }

@@ -25,7 +25,6 @@ function createPongTable() {
   centerLine = createElement("div", ["center-line"]);
 
   pongTable.appendChild(centerLine);
-
   target.appendChild(pongTable);
 }
 
@@ -105,7 +104,7 @@ function updatePaddle() {
 //  4. When the ball collides with a player’s paddle it changes horizontal direction.
 
 let ball;
-const ballSpeed = 5;
+const ballSpeed = 7;
 
 function createBall() {
   ball = createElement("div", ["ball"]);
@@ -124,12 +123,17 @@ function createBall() {
 
 /**
  * moveBall: Move the ball
+ * @param {{ Player1: string; Player2: string; }} players
+ * @param {{ Player1: number: Player2: number; }} scoreboard
  */
-function moveBall() {
+function moveBall(players, scoreboard) {
   const ball = document.querySelector(".ball");
   const leftPaddle = document.querySelector(".left-paddle");
   const rightPaddle = document.querySelector(".right-paddle");
 
+  // The Element.getBoundingClientRect() method returns a DOMRect object
+  // providing information about the size of an element and its position relative
+  // to the viewport.
   const leftPaddleRect = leftPaddle.getBoundingClientRect();
   const rightPaddleRect = rightPaddle.getBoundingClientRect();
 
@@ -163,9 +167,17 @@ function moveBall() {
     ball.velocity.x *= -1;
   }
 
-  // ball touches left or right walls
-  if (newLeft <= 0 || newLeft + ball.clientWidth >= pongTable.clientWidth) {
+  // ball touches left wall
+  if (newLeft <= 0) {
     // add score: TODO:
+    scoreboard[players.Player2]++;
+    return resetBall();
+  }
+
+  // ball touches right wall
+  if (newLeft + ball.clientWidth >= pongTable.clientWidth) {
+    // add score TODO:
+    scoreboard[players.Player1]++;
     return resetBall();
   }
 
@@ -181,17 +193,69 @@ function resetBall() {
   createBall();
 }
 
-function startGame() {
+/**
+ * startGame: start the game
+ * @param {{ Player1: string; Player2: string; }} players
+ * @param {{ Player1: number: Player2: number; }} scoreboard
+ */
+function startGame(players, scoreboard) {
   createPongTable();
   createPaddles();
   updatePaddle();
   createBall();
+  createScoreboard(players, scoreboard);
   gameLoop();
 
   function gameLoop() {
-    moveBall();
+    moveBall(players, scoreboard);
+    updateScoreboard(players, scoreboard);
     requestAnimationFrame(gameLoop);
   }
 }
 
-startGame();
+// Step 4: Add computer player
+// unbeatable or add some inconsistency to the computer player?
+
+// Step 5: Add score board
+
+const PLAYERS = { Player1: "Player1", Player2: "Player2" };
+const scoreboard = { Player1: 0, Player2: 0 };
+
+/**
+ * addScore: add to score of player
+ * @param {keyof PLAYERS} player
+ */
+function addScore(player) {
+  scoreboard[player]++;
+}
+
+/**
+ * createScoreboard: create a scoreboard
+ * @param {{ Player1: string; Player2: string; }} players
+ * @param {{ Player1: number: Player2: number; }} scoreboard
+ */
+function createScoreboard(players, scoreboard) {
+  const player1Score = createElement("div", ["score", "left-score"]);
+  const player2Score = createElement("div", ["score", "right-score"]);
+
+  player1Score.textContent = scoreboard[players.Player1];
+  player2Score.textContent = scoreboard[players.Player2];
+
+  pongTable.appendChild(player1Score);
+  pongTable.appendChild(player2Score);
+}
+
+/**
+ * updateScoreboard: update the scores
+ * @param {{ Player1: string; Player2: string; }} players
+ * @param {{ Player1: number: Player2: number; }} scoreboard
+ */
+function updateScoreboard(players, scoreboard) {
+  const player1Score = document.querySelector("div.score.left-score");
+  const player2Score = document.querySelector("div.score.right-score");
+
+  player1Score.textContent = scoreboard[players.Player1];
+  player2Score.textContent = scoreboard[players.Player2];
+}
+
+startGame(PLAYERS, scoreboard);
