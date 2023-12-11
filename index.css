@@ -61,3 +61,13 @@ div.score {
   font-size: x-large;
   font-family: Arial, Helvetica, sans-serif;
 }
+
+div.legend {
+  width: 20vw;
+  height: 80vh;
+}
+
+div.legend > div {
+  color: white;
+  font-family: Arial, Helvetica, sans-serif;
+}

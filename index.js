@@ -210,6 +210,7 @@ function startGame(players, scoreboard) {
   updatePaddle();
   createBall();
   createScoreboard(players, scoreboard);
+  addLegend();
   gameLoop();
 
   function gameLoop() {
@@ -332,6 +333,7 @@ function togglePause(hasBeenReset = false) {
 function handlePauseKey(event) {
   if (event.key === "p" || event.key === "P") {
     togglePause();
+    updateLegend();
   }
 }
 
@@ -345,3 +347,26 @@ function handleResetKey(event) {
 }
 
 document.addEventListener("keydown", handleResetKey);
+
+function addLegend() {
+  const legend = createElement("div", ["legend"]);
+  const legendPauseSection = createElement("div", ["pause-section"]);
+  const legendResetSection = createElement("div", ["reset-section"]);
+
+  const pauseText = `Press "P" to pause the game.`;
+  const resetText = `Press "R" to reset the game.`;
+
+  legendPauseSection.innerText = pauseText;
+  legendResetSection.innerText = resetText;
+
+  legend.appendChild(legendPauseSection);
+  legend.appendChild(legendResetSection);
+  target.appendChild(legend);
+}
+
+function updateLegend() {
+  const legendPauseSection = document.querySelector("div.pause-section");
+  const pauseText = `Press "P" to ${isGamePaused ? "un" : ""}pause the game.`;
+
+  legendPauseSection.innerText = pauseText;
+}
