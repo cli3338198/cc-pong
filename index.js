@@ -1,5 +1,7 @@
 const target = document.getElementById("target");
 
+let isGamePaused = false;
+
 /**
  * createElement: create element with classname
  * @param {string} element - valid htmll element
@@ -33,6 +35,8 @@ function createPongTable() {
 let leftPaddle;
 let rightPaddle;
 let rightPaddleDirection = 0; // 0: stationary, -1: moving up: 1: moving down
+let leftPaddleDirection = 0; // 0: stationary, -1: moving up: 1: moving down
+const leftPaddleSpeed = 5;
 const rightPaddleSpeed = 5;
 
 /**
@@ -164,19 +168,21 @@ function moveBall(players, scoreboard) {
     newTop + ball.clientHeight >= rightPaddleRect.top &&
     newTop <= rightPaddleRect.bottom
   ) {
+    // TODO: fix this
+    console.log("Touched the right paddle");
+    console.log({ ball });
     ball.velocity.x *= -1;
+    console.log({ ball });
   }
 
   // ball touches left wall
   if (newLeft <= 0) {
-    // add score: TODO:
     scoreboard[players.Player2]++;
     return resetBall();
   }
 
   // ball touches right wall
   if (newLeft + ball.clientWidth >= pongTable.clientWidth) {
-    // add score TODO:
     scoreboard[players.Player1]++;
     return resetBall();
   }
@@ -207,14 +213,60 @@ function startGame(players, scoreboard) {
   gameLoop();
 
   function gameLoop() {
-    moveBall(players, scoreboard);
-    updateScoreboard(players, scoreboard);
+    if (!isGamePaused) {
+      moveBall(players, scoreboard);
+      updateScoreboard(players, scoreboard);
+      computerPlayer();
+    }
     requestAnimationFrame(gameLoop);
   }
 }
 
+function togglePause() {
+  isGamePaused = !isGamePaused;
+}
+
+function handlePauseKey(event) {
+  if (event.key === "p" || event.key === "P") {
+    togglePause();
+  }
+}
+
+document.addEventListener("keydown", handlePauseKey);
+
 // Step 4: Add computer player
 // unbeatable or add some inconsistency to the computer player?
+
+function computerPlayer() {
+  const ballRect = ball.getBoundingClientRect();
+  const leftPaddleRect = leftPaddle.getBoundingClientRect();
+
+  const predictedBallPosition =
+    ballRect.top + ball.velocity.y * (leftPaddleRect.left / ball.velocity.x);
+
+  if (predictedBallPosition < leftPaddleRect.top + leftPaddleRect.height / 2) {
+    leftPaddleDirection = -1;
+    updateLeftPaddle();
+  } else {
+    leftPaddleDirection = 1;
+    updateLeftPaddle();
+  }
+}
+
+/**
+ * updateLeftPaddle: move the paddle up or down
+ */
+function updateLeftPaddle() {
+  const currentTop = leftPaddle.offsetTop;
+  const newTop = currentTop + leftPaddleDirection * leftPaddleSpeed;
+
+  if (
+    newTop >= 0 &&
+    newTop + leftPaddle.clientHeight <= pongTable.clientHeight
+  ) {
+    leftPaddle.style.top = newTop + "px";
+  }
+}
 
 // Step 5: Add score board
 
