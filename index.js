@@ -222,17 +222,16 @@ function startGame(players, scoreboard) {
   }
 }
 
-function togglePause() {
-  isGamePaused = !isGamePaused;
+/**
+ * resetGame: reset the game
+ * @param {{ Player1: string; Player2: string; }} players
+ * @param {{ Player1: number: Player2: number; }} scoreboard
+ */
+function resetGame(players, scoreboard) {
+  target.innerHTML = "";
+  resetScoreboard();
+  startGame(players, scoreboard);
 }
-
-function handlePauseKey(event) {
-  if (event.key === "p" || event.key === "P") {
-    togglePause();
-  }
-}
-
-document.addEventListener("keydown", handlePauseKey);
 
 // Step 4: Add computer player
 // unbeatable or add some inconsistency to the computer player?
@@ -310,4 +309,39 @@ function updateScoreboard(players, scoreboard) {
   player2Score.textContent = scoreboard[players.Player2];
 }
 
+function resetScoreboard() {
+  for (const key in scoreboard) {
+    scoreboard[key] = 0;
+  }
+}
+
 startGame(PLAYERS, scoreboard);
+
+/**
+ * togglePause: pause and unpause the game
+ * @param {boolean} hasBeenReset
+ */
+function togglePause(hasBeenReset = false) {
+  if (hasBeenReset) {
+    isGamePaused = false;
+  } else {
+    isGamePaused = !isGamePaused;
+  }
+}
+
+function handlePauseKey(event) {
+  if (event.key === "p" || event.key === "P") {
+    togglePause();
+  }
+}
+
+document.addEventListener("keydown", handlePauseKey);
+
+function handleResetKey(event) {
+  if (event.key === "r" || event.key === "R") {
+    togglePause(true);
+    resetGame(players, scoreboard);
+  }
+}
+
+document.addEventListener("keydown", handleResetKey);
